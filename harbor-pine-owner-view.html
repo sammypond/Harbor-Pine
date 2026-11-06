@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#24443A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="H&amp;P Owner">
+<title>Harbor &amp; Pine Owner View</title>
+<style>
+  :root {
+    --pine: #24443A; --pine-dark: #1B2B24; --amber: #C8862A; --sand: #F4EFE6;
+    --ink: #1B2B24; --muted: #5E7268; --line: #DCE3DF; --card: #FFFFFF;
+    --red: #B5463C; --red-bg: #F7E3E0; --green: #2F6B4F; --green-bg: #E1EFE7; --yellow-bg: #FBF0D9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--sand); color: var(--ink); }
+  header { background: var(--pine); color: #fff; padding: 14px 16px; }
+  .brand { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .brand svg { width: 46px; height: 46px; flex: none; }
+  .brand h1 { font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 700; line-height: 1.1; }
+  .brand p { font-size: 12px; opacity: .8; letter-spacing: .04em; text-transform: uppercase; margin-top: 2px; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .badge { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; }
+  .badge.demo { background: var(--yellow-bg); border-color: #E8D3A6; color: #6B4E14; }
+  button { font: inherit; border: 1px solid var(--pine); background: #fff; color: var(--pine); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  button:hover { background: var(--pine); color: #fff; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .hero { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .big { font-family: Georgia, "Times New Roman", serif; font-size: 56px; font-weight: 700; line-height: 1; margin-top: 6px; }
+  .big.over { color: var(--red); } .big.ok { color: var(--green); }
+  .sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat .val { font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .stat.alert { background: var(--yellow-bg); border-color: #E8D3A6; }
+  h2 { font-size: 15px; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  td { padding: 10px 4px; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; }
+  .pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill.over { background: var(--red-bg); color: var(--red); }
+  .pill.ok { background: var(--green-bg); color: var(--green); }
+  .pill.wait { background: var(--yellow-bg); color: #6B4E14; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .err { background: var(--red-bg); color: var(--red); border-color: #EBC3BD; font-size: 14px; }
+  .muted { color: var(--muted); font-size: 12px; }
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 8px 16px 24px; }
+  details { margin-top: 4px; }
+  details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  .setup { display: grid; gap: 8px; margin-top: 10px; }
+  .setup input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; width: 100%; }
+  /* Base = phone (iPhone 16 is 393px wide). Safe areas keep content clear of the Dynamic Island and home bar. */
+  html { -webkit-text-size-adjust: 100%; }
+  body { min-height: 100vh; }
+  header { padding-top: calc(14px + env(safe-area-inset-top)); padding-left: calc(16px + env(safe-area-inset-left)); padding-right: calc(16px + env(safe-area-inset-right)); position: sticky; top: 0; z-index: 5; }
+  main { padding-left: calc(16px + env(safe-area-inset-left)); padding-right: calc(16px + env(safe-area-inset-right)); }
+  footer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  main { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  main > * { margin-bottom: 0 !important; min-width: 0; }
+  .bar { margin-bottom: 0; }
+  button { min-height: 44px; padding: 8px 14px; }
+  .stats { gap: 12px; }
+  .stats .card { margin-bottom: 0; }
+  .stat .label { font-size: 11px; line-height: 1.3; }
+
+  /* Small phones (iPhone SE, mini) */
+  @media (max-width: 375px) {
+    .big { font-size: 46px; }
+    .stat .val { font-size: 22px; }
+    table { font-size: 14px; }
+    th { font-size: 10px; }
+    .pill { font-size: 11px; padding: 3px 6px; }
+  }
+  /* iPhone 16 / 16 Pro / Pro Max widths (376 to 440px) */
+  @media (min-width: 376px) and (max-width: 440px) {
+    .big { font-size: 54px; }
+  }
+  /* Tablets and small laptops */
+  @media (min-width: 641px) {
+    .brand, main { max-width: 760px; }
+    .big { font-size: 64px; }
+    .stat .val { font-size: 30px; }
+    .card { padding: 20px; }
+  }
+  /* Desktop: two columns, numbers on the left, locations on the right */
+  @media (min-width: 960px) {
+    .brand, main { max-width: 1120px; }
+    header { padding-top: 18px; padding-bottom: 18px; }
+    .brand svg { width: 54px; height: 54px; }
+    .brand h1 { font-size: 24px; }
+    main { padding-top: 24px; gap: 16px;
+      grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.45fr);
+      grid-template-areas: "bar bar" "hero locs" "stats locs" "chart chart" "settings settings"; }
+    .area-bar { grid-area: bar; } .area-hero { grid-area: hero; } .area-stats { grid-area: stats; }
+    .area-locs { grid-area: locs; } .area-chart { grid-area: chart; } .area-settings { grid-area: settings; }
+    .stats { align-self: start; }
+    .big { font-size: 76px; }
+    table { font-size: 16px; }
+    td { padding: 12px 6px; }
+    .area-hero { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+  }
+  /* Phones turned sideways: keep cards side by side */
+  @media (max-height: 500px) and (orientation: landscape) {
+    header { position: static; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <!-- Harbor & Pine mark: a pine tree over harbor waves, in a ring -->
+    <svg viewBox="0 0 64 64" role="img" aria-label="Harbor and Pine logo">
+      <circle cx="32" cy="32" r="30" fill="#1B2B24" stroke="#C8862A" stroke-width="2.5"/>
+      <path d="M32 11 L40 23 H36 L43 33 H38 L45 43 H19 L26 33 H21 L28 23 H24 Z" fill="#F4EFE6"/>
+      <rect x="30" y="43" width="4" height="5" fill="#F4EFE6"/>
+      <path d="M14 50 q4.5 -4 9 0 t9 0 t9 0 t9 0" fill="none" stroke="#C8862A" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <h1>Harbor &amp; Pine</h1>
+      <p>Restaurant Group · Owner View</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="bar area-bar">
+    <span id="week" class="badge">Loading…</span>
+    <span>
+      <span id="mode" class="badge"></span>
+      <button id="refresh" type="button">Refresh</button>
+    </span>
+  </div>
+
+  <div id="error" class="card err area-bar" hidden></div>
+
+  <section class="card hero area-hero">
+    <div>
+      <div class="label">Group food cost</div>
+      <div id="group" class="big">-</div>
+      <div id="target" class="sub"></div>
+    </div>
+  </section>
+
+  <section class="stats area-stats">
+    <div class="card stat"><div class="label">Locations reporting</div><div id="reporting" class="val">-</div></div>
+    <div id="ordersCard" class="card stat"><div class="label">Orders over $2,500 waiting on you</div><div id="orders" class="val">-</div></div>
+  </section>
+
+  <section class="card area-locs">
+    <h2>By location</h2>
+    <table>
+      <thead><tr><th>Location</th><th class="num">Food cost</th><th>Status</th><th class="num">To approve</th></tr></thead>
+      <tbody id="locs"></tbody>
+    </table>
+  </section>
+
+  <section class="card chart area-chart">
+    <h2>Six-week trend</h2>
+    <div id="chart"></div>
+  </section>
+
+  <section class="card area-settings">
+    <details>
+      <summary>Connection settings</summary>
+      <div class="setup">
+        <label class="muted" for="sid">Spreadsheet ID (the long code in the sheet's URL)</label>
+        <input id="sid" autocomplete="off" spellcheck="false">
+        <label class="muted" for="key">Google API key (Sheets API, read-only)</label>
+        <input id="key" autocomplete="off" spellcheck="false">
+        <div><button id="save" type="button">Save and connect</button> <button id="clear" type="button">Use demo data</button></div>
+        <p class="muted">This page only reads. It sends GET requests to the Google Sheets API and cannot change the sheet.</p>
+      </div>
+    </details>
+  </section>
+</main>
+<footer>Read-only view of the Owner View tab · Updates every 60 seconds</footer>
+
+<script>
+/* ---------- Settings ----------
+   Fill these in to hard-code the connection, or leave blank and use
+   "Connection settings" on the page (saved in this browser only). */
+const CONFIG = {
+  SPREADSHEET_ID: "1cY9eSEAP9D2EJz9nIa2ow-2uf9MMRhDL2U1Gl5lI40g", // Harbor_Pine_Food_Cost in your Drive
+  API_KEY: "AIzaSyCEiGaellYMUHQ_YrH5qgtJaNhBfk3i934",
+  TAB: "Owner View",
+  REFRESH_MS: 60000,
+};
+
+// Cells on the Owner View tab (matches the workbook layout)
+const RANGES = { week: "B2", group: "B4", target: "B5", reporting: "B6", locs: "A9:D14", orders: "B16", trend: "A21:B26" };
+
+const DEMO = {
+  week: [["11/1/2026"]], group: [["30.0%"]], target: [["30.0%"]], reporting: [["5 of 6"]], orders: [["1"]],
+  locs: [["Harbor","29.4%","On target","0"],["Westside","34.8%","Over target","1"],["Downtown","27.4%","On target","0"],
+         ["Northgate","30.0%","On target","0"],["Eastlake","29.7%","On target","0"],["Bayview","","Not in yet","0"]],
+  trend: [["9/27/2026","29.7%"],["10/4/2026","29.7%"],["10/11/2026","29.7%"],["10/18/2026","29.6%"],["10/25/2026","29.6%"],["11/1/2026","30.0%"]],
+};
+
+const $ = (id) => document.getElementById(id);
+function store(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
+function settings() {
+  return { id: CONFIG.SPREADSHEET_ID || load("hp_sid"), key: CONFIG.API_KEY || load("hp_key") };
+}
+const pct = (s) => { const n = parseFloat(String(s || "").replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
+const cell = (rows, r = 0, c = 0) => (rows && rows[r] && rows[r][c] != null ? String(rows[r][c]) : "");
+
+async function fetchSheet({ id, key }) {
+  const tab = "'" + CONFIG.TAB.replace(/'/g, "''") + "'";
+  const params = new URLSearchParams({ key, valueRenderOption: "FORMATTED_VALUE" });
+  Object.values(RANGES).forEach((r) => params.append("ranges", tab + "!" + r));
+  const url = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(id) + "/values:batchGet?" + params;
+  const res = await fetch(url, { method: "GET" });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((body.error && body.error.message) || ("Request failed (" + res.status + ")"));
+  const out = {};
+  Object.keys(RANGES).forEach((k, i) => { out[k] = (body.valueRanges[i] && body.valueRanges[i].values) || []; });
+  return out;
+}
+
+function render(d) {
+  $("week").textContent = "Week ending " + (cell(d.week) || "-");
+  const g = cell(d.group), t = cell(d.target), gn = pct(g), tn = pct(t);
+  $("group").textContent = g || "-";
+  $("group").className = "big " + (gn != null && tn != null ? (gn > tn ? "over" : "ok") : "");
+  $("target").textContent = t ? "Target " + t + (gn != null && tn != null ? (gn > tn ? " · over target" : " · on target") : "") : "";
+  $("reporting").textContent = cell(d.reporting) || "-";
+  const orders = cell(d.orders) || "0";
+  $("orders").textContent = orders;
+  $("ordersCard").classList.toggle("alert", Number(orders) > 0);
+
+  const tbody = $("locs"); tbody.replaceChildren();
+  (d.locs || []).forEach((r) => {
+    if (!r || !r[0]) return;
+    const tr = document.createElement("tr");
+    const status = cell([r], 0, 2);
+    const cls = status === "Over target" ? "over" : status === "On target" ? "ok" : "wait";
+    [["", cell([r],0,0)], ["num", cell([r],0,1) || "-"]].forEach(([c, v]) => { const td = document.createElement("td"); td.className = c; td.textContent = v; tr.appendChild(td); });
+    const tdS = document.createElement("td"); const pill = document.createElement("span"); pill.className = "pill " + cls; pill.textContent = status || "-"; tdS.appendChild(pill); tr.appendChild(tdS);
+    const tdA = document.createElement("td"); tdA.className = "num"; tdA.textContent = cell([r],0,3) || "0"; if (Number(tdA.textContent) > 0) tdA.style.fontWeight = "700"; tr.appendChild(tdA);
+    tbody.appendChild(tr);
+  });
+
+  drawTrend((d.trend || []).filter((r) => r && r[0]).map((r) => ({ label: r[0], v: pct(r[1]) })), tn);
+}
+
+let lastTrend = null;
+let resizeTimer;
+window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (lastTrend) drawTrend(lastTrend[0], lastTrend[1]); }, 150); });
+function drawTrend(points, target) {
+  lastTrend = [points, target];
+  const W = Math.max(280, Math.round($("chart").clientWidth || 600)), H = W < 520 ? 210 : 260, L = 46, R = 14, T = 28, B = 34;
+  const vals = points.map((p) => p.v).filter((v) => v != null).concat(target != null ? [target] : []);
+  if (!vals.length) { $("chart").textContent = "No trend data yet."; return; }
+  let lo = Math.floor(Math.min(...vals) - 1), hi = Math.ceil(Math.max(...vals) + 1);
+  const x = (i) => L + (points.length > 1 ? i * (W - L - R) / (points.length - 1) : (W - L - R) / 2);
+  const y = (v) => T + (hi - v) * (H - T - B) / (hi - lo);
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg"); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Group food cost by week");
+  const add = (tag, attrs, text) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  for (let v = lo; v <= hi; v++) {
+    add("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "#E6ECE8" });
+    add("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 13, fill: "#5E7268" }, v + "%");
+  }
+  if (target != null) {
+    add("line", { x1: L, x2: W - R, y1: y(target), y2: y(target), stroke: "#C8862A", "stroke-dasharray": "5 4", "stroke-width": 1.5 });
+    add("text", { x: L + 6, y: y(target) - 8, "text-anchor": "start", "font-size": 12, fill: "#8A5C17" }, "Target " + target + "%");
+  }
+  const pts = points.map((p, i) => (p.v == null ? null : [x(i), y(p.v)])).filter(Boolean);
+  add("polyline", { points: pts.map((p) => p.join(",")).join(" "), fill: "none", stroke: "#24443A", "stroke-width": 3, "stroke-linejoin": "round" });
+  points.forEach((p, i) => {
+    add("text", { x: x(i), y: H - 14, "text-anchor": i === 0 ? "start" : (i === points.length - 1 ? "end" : "middle"), "font-size": 13, fill: "#5E7268" }, p.label.replace(/\/\d{4}$/, ""));
+    if (p.v == null) return;
+    const last = i === points.length - 1;
+    add("circle", { cx: x(i), cy: y(p.v), r: last ? 6 : 4, fill: last ? "#C8862A" : "#24443A" });
+    if (last) add("text", { x: x(i) - 10, y: y(p.v) - 12, "text-anchor": "end", "font-size": 15, "font-weight": 700, fill: "#1B2B24" }, p.v.toFixed(1) + "%");
+  });
+  $("chart").replaceChildren(svg);
+}
+
+async function refresh() {
+  const s = settings();
+  $("error").hidden = true;
+  if (!s.id || !s.key) {
+    $("mode").textContent = "Demo data"; $("mode").className = "badge demo";
+    render(DEMO); return;
+  }
+  $("mode").textContent = "Live"; $("mode").className = "badge";
+  try {
+    render(await fetchSheet(s));
+    $("mode").textContent = "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  } catch (e) {
+    $("error").hidden = false;
+    $("error").textContent = "Couldn't read the sheet (" + e.message.replace(/[.\s]+$/, "") + "). Check the spreadsheet ID, the API key, and that the sheet is shared as 'Anyone with the link can view.'";
+  }
+}
+
+$("sid").value = load("hp_sid"); $("key").value = load("hp_key");
+$("save").addEventListener("click", () => { store("hp_sid", $("sid").value.trim()); store("hp_key", $("key").value.trim()); refresh(); });
+$("clear").addEventListener("click", () => { store("hp_sid", null); store("hp_key", null); $("sid").value = ""; $("key").value = ""; refresh(); });
+$("refresh").addEventListener("click", refresh);
+refresh();
+setInterval(refresh, CONFIG.REFRESH_MS);
+</script>
+</body>
+</html>
