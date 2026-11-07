@@ -58,6 +58,8 @@
   .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
   .status.demo .dot { background: var(--amber); }
   .status.error .dot { background: var(--red); }
+  .status.flash { border-color: var(--green); background: var(--green-bg); color: var(--green); transition: background .2s, border-color .2s; }
+  .refresh:disabled { opacity: .75; cursor: default; }
   .refresh { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--pine); color: #fff; font-size: 13px; font-weight: 600; }
   .refresh::after { content: ""; position: absolute; inset: -8px -4px; } /* 44px tap area without a bulky button */
   .refresh:hover { background: var(--pine-dark); }
@@ -255,8 +257,8 @@ const $ = (id) => document.getElementById(id);
 const pct = (s) => { const n = parseFloat(String(s || "").replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
 const cell = (rows, r = 0, c = 0) => (rows && rows[r] && rows[r][c] != null ? String(rows[r][c]) : "");
 
-async function fetchData() {
-  const res = await fetch(CONFIG.DATA_URL, { method: "GET", headers: { Accept: "application/json" } });
+async function fetchData(fresh) {
+  const res = await fetch(CONFIG.DATA_URL + (fresh ? "?fresh=1&t=" + Date.now() : ""), { method: "GET", cache: "no-store", headers: { Accept: "application/json" } });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error((body.error && (body.error.message || body.error)) || ("Request failed (" + res.status + ")"));
   const out = {};
@@ -343,13 +345,13 @@ const DEMO_ORDERS = { count: 1, total: 3100, orders: [{ location: "Westside", gm
   category: "Meat & Seafood", invoice: "SYS-58817", amount: 3100, status: "Pending", link: "" }] };
 let ordersOpen = false;
 
-async function loadOrders() {
+async function loadOrders(fresh) {
   const box = $("ordersDetail");
   let data;
   try {
     if (!CONFIG.DATA_URL) data = DEMO_ORDERS;
     else {
-      const res = await fetch(CONFIG.DATA_URL + "?view=orders", { method: "GET", headers: { Accept: "application/json" } });
+      const res = await fetch(CONFIG.DATA_URL + "?view=orders" + (fresh ? "&fresh=1&t=" + Date.now() : ""), { method: "GET", cache: "no-store", headers: { Accept: "application/json" } });
       data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
     }
@@ -384,7 +386,7 @@ function toggleOrders(open) {
   $("ordersCard").setAttribute("aria-expanded", String(open));
   $("ordersMore").firstChild.textContent = open ? "Hide details " : "Show details ";
   $("ordersDetail").hidden = !open;
-  if (open) { $("ordersDetail").replaceChildren(el("p", "note", "Loading orders...")); loadOrders(); }
+  if (open) { $("ordersDetail").replaceChildren(el("p", "note", "Loading orders...")); loadOrders(false); }
 }
 
 function setStatus(kind, text) {
@@ -392,18 +394,28 @@ function setStatus(kind, text) {
   $("mode").textContent = text;
 }
 
-async function refresh() {
+const timeNow = () => new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+let busy = false;
+
+async function refresh(fresh) {
+  if (busy) return;
+  busy = true;
+  const manual = fresh === true;
+  const btn = $("refresh");
+  btn.classList.add("spin"); btn.disabled = true;
   $("error").hidden = true;
-  $("refresh").classList.add("spin");
-  const done = () => $("refresh").classList.remove("spin");
-  if (!CONFIG.DATA_URL) {
-    setStatus("demo", "Demo data");
-    render(DEMO); if (ordersOpen) loadOrders(); done(); return;
-  }
+  const started = Date.now();
+  let ok = false;
   try {
-    render(await fetchData());
-    setStatus("", "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
-    if (ordersOpen) loadOrders();
+    if (!CONFIG.DATA_URL) {
+      render(DEMO); if (ordersOpen) loadOrders(manual);
+      setStatus("demo", "Demo data"); ok = true;
+    } else {
+      render(await fetchData(manual));
+      if (ordersOpen) loadOrders(manual);
+      setStatus("", "Live · " + timeNow()); ok = true;
+    }
   } catch (e) {
     setStatus("error", "Not updated");
     $("error").hidden = false;
@@ -411,14 +423,22 @@ async function refresh() {
       ? "Couldn't reach the data service. Check your connection, or open this page in Chrome or Safari instead of an app preview."
       : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
   }
-  done();
+  // Keep the spinner up long enough to see, then confirm a manual refresh
+  if (manual) await wait(Math.max(0, 600 - (Date.now() - started)));
+  btn.classList.remove("spin"); btn.disabled = false; busy = false;
+  if (manual && ok) {
+    const label = $("mode").textContent;
+    $("statusPill").classList.add("flash"); $("mode").textContent = "Updated";
+    await wait(1200);
+    $("statusPill").classList.remove("flash"); $("mode").textContent = label;
+  }
 }
 
-$("refresh").addEventListener("click", refresh);
+$("refresh").addEventListener("click", () => refresh(true));
 $("ordersCard").addEventListener("click", () => toggleOrders(!ordersOpen));
-document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); }); // refresh when the phone app comes back to the front
-refresh();
-setInterval(refresh, CONFIG.REFRESH_MS);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(false); }); // refresh when the phone app comes back to the front
+refresh(false);
+setInterval(() => refresh(false), CONFIG.REFRESH_MS);
 </script>
 </body>
 </html>

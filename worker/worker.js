@@ -6,7 +6,8 @@
 // It is read-only and locked down:
 //  - only GET requests, only from ALLOWED_ORIGINS
 //  - the browser picks a view, never a cell range
-//  - results cached for 30 seconds so refreshes don't hit Google every time
+//  - results cached for 30 seconds; ?fresh=1 (the Refresh button) skips the cache,
+//    but never more than once every 5 seconds
 //
 // Views:
 //   (default)      the Owner View tab
@@ -38,7 +39,9 @@ export default {
     if (!originOk) return json({ error: "This data service only answers the Harbor & Pine site" }, 403);
     if (!env.SHEETS_API_KEY || !env.SPREADSHEET_ID) return json({ error: "Data service isn't configured yet" }, 500);
 
-    const view = new URL(request.url).searchParams.get("view") || "owner";
+    const params = new URL(request.url).searchParams;
+    const view = params.get("view") || "owner";
+    const fresh = params.get("fresh") === "1"; // Refresh button: skip the saved copy
     let build;
     if (view === "owner") build = () => ownerView(env);
     else if (view === "orders") build = () => ordersView(env);
@@ -48,11 +51,16 @@ export default {
     const cache = caches.default;
     const cacheKey = new Request("https://cache.local/" + view, { method: "GET" });
     const hit = await cache.match(cacheKey);
-    if (hit) return respond(await hit.text());
+    if (hit) {
+      // Normal loads use the saved copy (up to 30s old). A Refresh tap gets new data,
+      // unless the saved copy is under 5 seconds old, so repeated taps can't flood Google.
+      const age = Date.now() - Number(hit.headers.get("X-Saved-At") || 0);
+      if (!fresh || age < 5000) return respond(await hit.text());
+    }
 
     try {
       const out = JSON.stringify(await build());
-      ctx.waitUntil(cache.put(cacheKey, new Response(out, { headers: { "Cache-Control": "max-age=30" } })));
+      ctx.waitUntil(cache.put(cacheKey, new Response(out, { headers: { "Cache-Control": "max-age=30", "X-Saved-At": String(Date.now()) } })));
       return respond(out);
     } catch (e) {
       return json({ error: e.publicMessage || "Couldn't read the sheet" }, e.status || 502);
