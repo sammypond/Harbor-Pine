@@ -24,7 +24,6 @@
     --val: clamp(22px, 6.5vw, 30px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -80,47 +79,6 @@
   .err { background: var(--red-bg); color: var(--red); border-color: #EBC3BD; font-size: 14px; }
   footer { text-align: center; font-size: 12px; color: var(--muted); padding: 8px var(--gutter) calc(24px + env(safe-area-inset-bottom)); }
 
-  /* Clickable cards and rows */
-  a.card { display: block; color: inherit; text-decoration: none; }
-  .link { cursor: pointer; transition: box-shadow .15s, transform .15s; }
-  .link:hover { box-shadow: 0 4px 14px rgba(27,43,36,.10); }
-  .link:active { transform: scale(.99); }
-  .more { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--pine); }
-  .stat.alert .more { color: #6B4E14; }
-  tr.row-link { cursor: pointer; }
-  tr.row-link:hover td { background: #F7F9F8; }
-  tr.row-link td:first-child a { color: var(--ink); text-decoration: none; font-weight: 600; }
-  .chev { color: var(--muted); margin-left: 4px; }
-  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
-
-  /* Detail pages */
-  .detail { max-width: 760px; }
-  .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--pine); text-decoration: none; }
-  .page-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(26px, 7.5vw, 36px); line-height: 1.1; }
-  .page-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
-  .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
-  .kpi .val { font-size: clamp(18px, 5vw, 24px); font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .catrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line); }
-  .catrow:last-child { border-bottom: 0; }
-  .catrow .amt { font-variant-numeric: tabular-nums; font-weight: 600; }
-  .catrow .share { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 6px; }
-  .bar { grid-column: 1 / -1; height: 8px; background: #EEF3F0; border-radius: 99px; overflow: hidden; }
-  .bar span { display: block; height: 100%; background: var(--pine); border-radius: 99px; }
-  .inv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .inv:last-child { border-bottom: 0; }
-  .inv .who { font-weight: 600; }
-  .inv .meta { grid-column: 1 / 2; font-size: 13px; color: var(--muted); }
-  .inv .amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
-  .order { display: grid; gap: 6px; }
-  .order .amt { font-family: Georgia, "Times New Roman", serif; font-size: clamp(30px, 9vw, 40px); font-weight: 700; line-height: 1; }
-  .order .who { font-size: 17px; font-weight: 600; }
-  .order .meta { font-size: 14px; color: var(--muted); }
-  .order .waiting { display: inline-block; font-size: 12px; font-weight: 600; background: var(--yellow-bg); color: #6B4E14; border-radius: 999px; padding: 3px 8px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--pine); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; margin-top: 6px; }
-  .btn.secondary { background: #fff; color: var(--pine); border: 1px solid var(--pine); }
-  .empty { text-align: center; color: var(--muted); padding: 28px 12px; }
-  .empty b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
-
   /* ---- Breakpoints ----
      <= 359px  : smallest phones (iPhone SE 1st gen 320, older/compact Android)
      360-389px : iPhone SE 2/3, 12/13 mini (375), Galaxy S20-S25 / A-series (360-384)
@@ -130,7 +88,6 @@
      >= 960px  : laptops and desktops (two-column layout) */
   @media (max-width: 359px) {
     .brand p { display: none; }
-    .kpis { grid-template-columns: 1fr; }
     .stats { grid-template-columns: 1fr; }
     table { font-size: 13px; }
     th { font-size: 10px; letter-spacing: .03em; }
@@ -147,8 +104,6 @@
   }
   @media (min-width: 390px) and (max-width: 440px) {
     table { font-size: 15px; }
-    td { padding: 10px 3px; } th { padding: 6px 3px; }
-    .long { display: none; } .short { display: inline; }
   }
   @media (min-width: 441px) and (max-width: 639px) {
     main, .brand { max-width: 600px; }
@@ -180,10 +135,6 @@
     .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; }
     .big { font-size: clamp(40px, 7vw, 60px); }
   }
-  /* Detail pages are always one column, centered, at every size */
-  main.detail { max-width: 760px; grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
-  main.detail > * { grid-area: auto !important; }
-  @media (min-width: 640px) { main.detail { padding-top: 20px; } }
   @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -204,7 +155,7 @@
   </div>
 </header>
 
-<main id="dash">
+<main>
   <div class="bar area-bar">
     <span id="week" class="badge">Loading...</span>
     <span class="right">
@@ -223,7 +174,7 @@
 
   <section class="stats area-stats">
     <div class="card stat"><div class="label">Locations reporting</div><div id="reporting" class="val">-</div></div>
-    <a id="ordersCard" class="card stat link" href="#/orders" aria-label="See orders over $2,500 waiting on you"><div class="label">Orders over $2,500 waiting on you</div><div id="orders" class="val">-</div><span class="more">See orders <span aria-hidden="true">&rsaquo;</span></span></a>
+    <div id="ordersCard" class="card stat"><div class="label">Orders over $2,500 waiting on you</div><div id="orders" class="val">-</div></div>
   </section>
 
   <section class="card area-locs">
@@ -237,7 +188,6 @@
       </tr></thead>
       <tbody id="locs"></tbody>
     </table>
-    <p class="hint">Tap a restaurant to see its week.</p>
   </section>
 
   <section class="card chart area-chart">
@@ -245,8 +195,6 @@
     <div id="chart"></div>
   </section>
 </main>
-
-<main id="detail" class="detail" hidden></main>
 <footer>Read-only view of the Owner View tab · Updates every 60 seconds</footer>
 
 <!-- config.js holds only the public address of your Cloudflare Worker. No API key lives in this site. -->
@@ -267,14 +215,6 @@ const DEMO = {
 const $ = (id) => document.getElementById(id);
 const pct = (s) => { const n = parseFloat(String(s || "").replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
 const cell = (rows, r = 0, c = 0) => (rows && rows[r] && rows[r][c] != null ? String(rows[r][c]) : "");
-
-async function getJSON(params) {
-  const q = new URLSearchParams(params || {}).toString();
-  const res = await fetch(CONFIG.DATA_URL + (q ? "?" + q : ""), { method: "GET", headers: { Accept: "application/json" } });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((body.error && (body.error.message || body.error)) || ("Request failed (" + res.status + ")"));
-  return body;
-}
 
 async function fetchData() {
   const res = await fetch(CONFIG.DATA_URL, { method: "GET", headers: { Accept: "application/json" } });
@@ -303,12 +243,7 @@ function render(d) {
     const status = cell([r], 0, 2);
     const cls = status === "Over target" ? "over" : status === "On target" ? "ok" : "wait";
     const td = (cls2, text) => { const e = document.createElement("td"); e.className = cls2; e.textContent = text; tr.appendChild(e); return e; };
-    const name = cell([r], 0, 0);
-    const nameTd = document.createElement("td"); const a = document.createElement("a");
-    a.href = "#/location/" + encodeURIComponent(name); a.textContent = name;
-    const chev = document.createElement("span"); chev.className = "chev"; chev.setAttribute("aria-hidden", "true"); chev.textContent = "\u203A";
-    a.appendChild(chev); nameTd.appendChild(a); tr.appendChild(nameTd);
-    tr.className = "row-link"; tr.addEventListener("click", (ev) => { if (ev.target.tagName !== "A") location.hash = a.getAttribute("href"); });
+    td("", cell([r], 0, 0));
     td("num", cell([r], 0, 1) || "-");
     const tdS = document.createElement("td"); const pill = document.createElement("span");
     pill.className = "pill " + cls; pill.textContent = status || "-"; tdS.appendChild(pill); tr.appendChild(tdS);
@@ -356,162 +291,24 @@ function drawTrend(points, target) {
   $("chart").replaceChildren(svg);
 }
 
-// ---------- Detail pages ----------
-const usd0 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-const usd2 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const daysSince = (d) => { const t = Date.parse(d); if (!t) return null; return Math.max(0, Math.floor((Date.now() - t) / 86400000)); };
-
-const DEMO_LOC = {
-  Harbor:    { gm: "Tony",   cats: [2706, 4675, 1476, 2214, 1230], sales: 41850, waiting: 0 },
-  Westside:  { gm: "Luis",   cats: [2081, 6695, 1135, 1703, 946],  sales: 36110, waiting: 1 },
-  Downtown:  { gm: "Maria",  cats: [3224, 5568, 1758, 2638, 1465], sales: 53390, waiting: 0 },
-  Northgate: { gm: "Priya",  cats: [2218, 3831, 1210, 1815, 1008], sales: 33570, waiting: 0 },
-  Eastlake:  { gm: "Ben",    cats: [2510, 4336, 1369, 2054, 1141], sales: 38370, waiting: 0 },
-  Bayview:   { gm: "Keisha", cats: [0, 0, 0, 0, 0],                sales: 0,     waiting: 0 },
-};
-const DEMO_CATS = ["Produce", "Meat & Seafood", "Dairy", "Dry Goods", "Bakery"];
-const DEMO_VENDORS = ["Coastal Produce Co.", "Sysco", "Valley Dairy", "US Foods", "Hearth Bakery"];
-function demoLocation(name) {
-  const d = DEMO_LOC[name]; if (!d) throw new Error("Unknown location");
-  const purchases = d.cats.reduce((a, b) => a + b, 0);
-  const foodCost = d.sales ? Math.round(purchases / d.sales * 1000) / 10 : null;
-  const top = d.cats.map((amt, i) => ({ date: "10/30/2026", vendor: DEMO_VENDORS[i], category: DEMO_CATS[i], invoice: "", amount: amt, waiting: false, approved: false }))
-    .filter((x) => x.amount > 0);
-  if (name === "Westside") { top[1].amount -= 3100; top.push({ date: "10/31/2026", vendor: "Sysco", category: "Meat & Seafood", invoice: "SYS-58817", amount: 3100, waiting: true, approved: false }); }
-  top.sort((a, b) => b.amount - a.amount);
-  return { name, gm: d.gm, week: "11/1/2026", target: 30, foodSales: d.sales, purchases, foodCost,
-    status: !purchases ? "Not in yet" : (foodCost > 30 ? "Over target" : "On target"), waiting: d.waiting, invoiceCount: top.length,
-    lastInvoice: purchases ? "10/31/2026" : "10/24/2026", byCategory: DEMO_CATS.map((c, i) => ({ category: c, amount: d.cats[i] })), topInvoices: top.slice(0, 5), link: "" };
-}
-const DEMO_ORDERS = { count: 1, total: 3100, orders: [{ location: "Westside", gm: "Luis", week: "11/1/2026", date: "10/31/2026", vendor: "Sysco",
-  category: "Meat & Seafood", invoice: "SYS-58817", amount: 3100, status: "Pending", link: "" }] };
-
-function pageHead(title, sub) {
-  const box = el("div");
-  const back = el("a", "back"); back.href = "#/"; back.innerHTML = '<span aria-hidden="true">&lsaquo;</span> Owner View';
-  box.append(back, el("h2", "page-title", title));
-  if (sub) box.appendChild(el("p", "page-sub", sub));
-  return box;
-}
-
-function renderOrders(data) {
-  const v = $("detail"); v.replaceChildren();
-  const n = data.count || 0;
-  v.appendChild(pageHead("Orders waiting on you", n
-    ? `Over $2,500 and not yet approved · ${n} order${n === 1 ? "" : "s"} · ${usd0.format(data.total || 0)} total`
-    : "Over $2,500 and not yet approved"));
-  if (!n) {
-    const c = el("section", "card empty"); c.append(el("b", null, "Nothing waiting"), document.createTextNode("Every order over $2,500 has been approved."));
-    v.appendChild(c); return;
-  }
-  data.orders.forEach((o) => {
-    const c = el("section", "card order");
-    c.appendChild(el("div", "amt", usd2.format(o.amount)));
-    c.appendChild(el("div", "who", `${o.location} · ${o.vendor}`));
-    c.appendChild(el("div", "meta", `${o.category}${o.invoice ? " · Invoice " + o.invoice : ""}`));
-    const d = daysSince(o.date);
-    const line = el("div", "meta", `Invoice date ${o.date}${o.gm ? " · GM " + o.gm : ""} `);
-    if (d != null) line.appendChild(el("span", "waiting", d === 0 ? "Came in today" : `Waiting ${d} day${d === 1 ? "" : "s"}`));
-    c.appendChild(line);
-    if (o.link) { const a = el("a", "btn", "Open in Google Sheets to approve"); a.href = o.link; a.target = "_blank"; a.rel = "noopener"; c.appendChild(a); }
-    v.appendChild(c);
-  });
-}
-
-function renderLocation(d) {
-  const v = $("detail"); v.replaceChildren();
-  v.appendChild(pageHead(d.name, `${d.gm ? "GM " + d.gm + " · " : ""}Week ending ${d.week || "-"}`));
-
-  const hero = el("section", "card");
-  hero.appendChild(el("div", "label", "Food cost"));
-  const big = el("div", "big", d.foodCost != null ? d.foodCost.toFixed(1) + "%" : "-");
-  if (d.foodCost != null && d.target != null) big.classList.add(d.foodCost > d.target ? "over" : "ok");
-  hero.appendChild(big);
-  const sub = el("div", "sub", (d.target != null ? "Target " + d.target.toFixed(1) + "% · " : "") + d.status);
-  hero.appendChild(sub);
-  v.appendChild(hero);
-
-  const k = el("section", "kpis");
-  [["Food sales", d.foodSales ? usd0.format(d.foodSales) : "-"], ["Food purchases", usd0.format(d.purchases || 0)], ["Orders to approve", String(d.waiting || 0)]]
-    .forEach(([lab, val]) => { const c = el("div", "card kpi"); c.append(el("div", "label", lab), el("div", "val", val)); k.appendChild(c); });
-  v.appendChild(k);
-
-  if (!d.invoiceCount) {
-    const c = el("section", "card empty");
-    c.append(el("b", null, "Nothing in yet this week"), document.createTextNode(`Last invoice entered ${d.lastInvoice || "-"}.`));
-    v.appendChild(c);
-  } else {
-    const cats = el("section", "card"); cats.appendChild(el("h2", null, "Where the money went"));
-    const max = Math.max(1, ...d.byCategory.map((x) => x.amount));
-    d.byCategory.filter((x) => x.amount > 0).sort((a, b) => b.amount - a.amount).forEach((x) => {
-      const row = el("div", "catrow");
-      row.appendChild(el("div", null, x.category));
-      const amt = el("div", "amt", usd0.format(x.amount));
-      amt.appendChild(el("span", "share", d.purchases ? Math.round(x.amount / d.purchases * 100) + "%" : ""));
-      row.appendChild(amt);
-      const bar = el("div", "bar"); const fill = el("span"); fill.style.width = (x.amount / max * 100).toFixed(1) + "%"; bar.appendChild(fill); row.appendChild(bar);
-      cats.appendChild(row);
-    });
-    v.appendChild(cats);
-
-    const inv = el("section", "card"); inv.appendChild(el("h2", null, "Biggest invoices this week"));
-    d.topInvoices.forEach((x) => {
-      const row = el("div", "inv");
-      row.appendChild(el("div", "who", x.vendor));
-      row.appendChild(el("div", "amt", usd2.format(x.amount)));
-      const meta = el("div", "meta", `${x.category} · ${x.date}${x.invoice ? " · " + x.invoice : ""} `);
-      if (x.waiting) meta.appendChild(el("span", "pill wait", "Needs Marcus OK"));
-      row.appendChild(meta);
-      inv.appendChild(row);
-    });
-    v.appendChild(inv);
-  }
-  if (d.link) { const a = el("a", "btn secondary", `Open ${d.name} in Google Sheets`); a.href = d.link; a.target = "_blank"; a.rel = "noopener"; v.appendChild(a); }
-}
-
-// ---------- Routing: #/  #/orders  #/location/Name ----------
-function route() {
-  const h = location.hash.replace(/^#\/?/, "");
-  if (h === "orders") return { page: "orders" };
-  if (h.startsWith("location/")) return { page: "location", name: decodeURIComponent(h.slice(9)) };
-  return { page: "dash" };
-}
-
-function showError(e) {
-  $("error").hidden = false;
-  $("error").textContent = e instanceof TypeError
-    ? "Couldn't reach the data service. Check your connection, or open this page in Chrome or Safari instead of an app preview."
-    : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
-}
-
 async function refresh() {
-  const r = route();
-  const onDash = r.page === "dash";
-  $("dash").hidden = !onDash; $("detail").hidden = onDash;
   $("error").hidden = true;
-  if (onDash) {
-    if (!CONFIG.DATA_URL) { $("mode").textContent = "Demo data"; $("mode").className = "badge demo"; render(DEMO); return; }
-    $("mode").textContent = "Live"; $("mode").className = "badge";
-    try {
-      render(await fetchData());
-      $("mode").textContent = "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    } catch (e) { showError(e); }
-    return;
+  if (!CONFIG.DATA_URL) {
+    $("mode").textContent = "Demo data"; $("mode").className = "badge demo";
+    render(DEMO); return;
   }
-  // Detail pages show errors inside the page so the back link stays visible
+  $("mode").textContent = "Live"; $("mode").className = "badge";
   try {
-    if (r.page === "orders") renderOrders(CONFIG.DATA_URL ? await getJSON({ view: "orders" }) : DEMO_ORDERS);
-    else renderLocation(CONFIG.DATA_URL ? await getJSON({ view: "location", name: r.name }) : demoLocation(r.name));
+    render(await fetchData());
+    $("mode").textContent = "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   } catch (e) {
-    const v = $("detail"); v.replaceChildren(pageHead(r.page === "orders" ? "Orders waiting on you" : r.name));
-    const box = el("div", "card err"); v.appendChild(box);
-    $("error").hidden = true;
-    box.textContent = e instanceof TypeError ? "Couldn't reach the data service. Check your connection." : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
+    $("error").hidden = false;
+    $("error").textContent = e instanceof TypeError
+      ? "Couldn't reach the data service. Check your connection, or open this page in Chrome or Safari instead of an app preview."
+      : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
   }
 }
 
-window.addEventListener("hashchange", () => { window.scrollTo(0, 0); refresh(); });
 $("refresh").addEventListener("click", refresh);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); }); // refresh when the phone app comes back to the front
 refresh();
