@@ -24,6 +24,7 @@
     --val: clamp(22px, 6.5vw, 30px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -50,8 +51,37 @@
   .bar .right { display: flex; align-items: center; gap: 8px; }
   .badge { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
   .badge.demo { background: var(--yellow-bg); border-color: #E8D3A6; color: #6B4E14; }
-  button { font: inherit; font-size: 14px; border: 1px solid var(--pine); background: #fff; color: var(--pine); border-radius: 10px; min-height: 44px; padding: 8px 14px; cursor: pointer; touch-action: manipulation; }
-  button:hover, button:active { background: var(--pine); color: #fff; }
+  button { font: inherit; cursor: pointer; touch-action: manipulation; }
+
+  /* Status + refresh: one tidy pill on the right */
+  .status { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 4px 0 12px; background: #fff; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
+  .status.demo .dot { background: var(--amber); }
+  .status.error .dot { background: var(--red); }
+  .refresh { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--pine); color: #fff; font-size: 13px; font-weight: 600; }
+  .refresh::after { content: ""; position: absolute; inset: -8px -4px; } /* 44px tap area without a bulky button */
+  .refresh:hover { background: var(--pine-dark); }
+  .refresh svg { width: 14px; height: 14px; }
+  .refresh.spin svg { animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .badge { height: 36px; display: inline-flex; align-items: center; }
+
+  /* Orders card opens details below it */
+  button.card { width: 100%; text-align: left; font: inherit; color: inherit; }
+  .stat.clickable { cursor: pointer; transition: box-shadow .15s; }
+  .stat.clickable:hover { box-shadow: 0 4px 14px rgba(27,43,36,.10); }
+  .more { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 13px; font-weight: 600; color: #6B4E14; }
+  .more .chev { display: inline-block; transition: transform .2s; }
+  .stat[aria-expanded="true"] .more .chev { transform: rotate(180deg); }
+  .orders-detail h2 { margin-bottom: 4px; }
+  .orders-detail .sub { margin: 0 0 6px; }
+  .order { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .order .who { font-weight: 700; font-size: 16px; }
+  .order .amt { font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 22px; text-align: right; font-variant-numeric: tabular-nums; }
+  .order .meta { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
+  .order .waiting { display: inline-block; font-size: 12px; font-weight: 600; background: var(--yellow-bg); color: #6B4E14; border-radius: 999px; padding: 2px 8px; margin-left: 4px; }
+  .order .btn { grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--pine); color: #fff; font-weight: 600; font-size: 14px; text-decoration: none; margin-top: 4px; }
+  .note { font-size: 14px; color: var(--muted); padding-top: 8px; }
 
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: var(--pad); min-width: 0; }
   .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); line-height: 1.3; }
@@ -120,9 +150,9 @@
     header { padding-top: calc(18px + env(safe-area-inset-top)); padding-bottom: 18px; }
     main { padding-top: 24px;
       grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.45fr);
-      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "chart chart"; }
+      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "od od" "chart chart"; }
     .area-bar { grid-area: bar; } .area-err { grid-area: err; } .area-hero { grid-area: hero; }
-    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; }
+    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; } .area-od { grid-area: od; }
     .area-hero { display: flex; flex-direction: column; justify-content: center; }
     td { padding: 12px 6px; }
   }
@@ -130,9 +160,9 @@
   @media (orientation: landscape) and (max-height: 500px) {
     header { position: static; }
     main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "chart chart"; }
+      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "od od" "chart chart"; }
     .area-bar { grid-area: bar; } .area-err { grid-area: err; } .area-hero { grid-area: hero; }
-    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; }
+    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; } .area-od { grid-area: od; }
     .big { font-size: clamp(40px, 7vw, 60px); }
   }
   @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
@@ -158,9 +188,13 @@
 <main>
   <div class="bar area-bar">
     <span id="week" class="badge">Loading...</span>
-    <span class="right">
-      <span id="mode" class="badge"></span>
-      <button id="refresh" type="button">Refresh</button>
+    <span id="statusPill" class="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="mode">Loading</span>
+      <button id="refresh" class="refresh" type="button" aria-label="Refresh now">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+        Refresh
+      </button>
     </span>
   </div>
 
@@ -174,8 +208,13 @@
 
   <section class="stats area-stats">
     <div class="card stat"><div class="label">Locations reporting</div><div id="reporting" class="val">-</div></div>
-    <div id="ordersCard" class="card stat"><div class="label">Orders over $2,500 waiting on you</div><div id="orders" class="val">-</div></div>
+    <button id="ordersCard" class="card stat" type="button" aria-expanded="false" aria-controls="ordersDetail">
+      <div class="label">Orders over $2,500 waiting on you</div><div id="orders" class="val">-</div>
+      <span id="ordersMore" class="more" hidden>Show details <span class="chev" aria-hidden="true">&#9662;</span></span>
+    </button>
   </section>
+
+  <section id="ordersDetail" class="card orders-detail area-od" hidden aria-live="polite"></section>
 
   <section class="card area-locs">
     <h2>By location</h2>
@@ -234,7 +273,12 @@ function render(d) {
   $("reporting").textContent = cell(d.reporting) || "-";
   const orders = cell(d.orders) || "0";
   $("orders").textContent = orders;
-  $("ordersCard").classList.toggle("alert", Number(orders) > 0);
+  const waiting = Number(orders) > 0;
+  $("ordersCard").classList.toggle("alert", waiting);
+  $("ordersCard").classList.toggle("clickable", waiting);
+  $("ordersCard").disabled = !waiting;
+  $("ordersMore").hidden = !waiting;
+  if (!waiting && ordersOpen) toggleOrders(false);
 
   const tbody = $("locs"); tbody.replaceChildren();
   (d.locs || []).forEach((r) => {
@@ -291,25 +335,87 @@ function drawTrend(points, target) {
   $("chart").replaceChildren(svg);
 }
 
+// ---------- Order details (opens below the orders card) ----------
+const usd2 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const daysSince = (d) => { const t = Date.parse(d); return t ? Math.max(0, Math.floor((Date.now() - t) / 86400000)) : null; };
+const DEMO_ORDERS = { count: 1, total: 3100, orders: [{ location: "Westside", gm: "Luis", date: "10/31/2026", vendor: "Sysco",
+  category: "Meat & Seafood", invoice: "SYS-58817", amount: 3100, status: "Pending", link: "" }] };
+let ordersOpen = false;
+
+async function loadOrders() {
+  const box = $("ordersDetail");
+  let data;
+  try {
+    if (!CONFIG.DATA_URL) data = DEMO_ORDERS;
+    else {
+      const res = await fetch(CONFIG.DATA_URL + "?view=orders", { method: "GET", headers: { Accept: "application/json" } });
+      data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
+    }
+  } catch (e) {
+    box.replaceChildren(el("h2", null, "Orders waiting on you"), el("p", "note", "Couldn't load the order details. " + (e instanceof TypeError ? "Check your connection." : String(e.message))));
+    return;
+  }
+  box.replaceChildren(el("h2", null, "Orders waiting on you"));
+  if (!data || !Array.isArray(data.orders)) {
+    // An older data service only knows the Owner View tab
+    box.appendChild(el("p", "note", "Order details need the updated data service. Deploy the new worker/worker.js to Cloudflare, then refresh."));
+    return;
+  }
+  if (!data.orders.length) { box.appendChild(el("p", "note", "Nothing waiting. Every order over $2,500 has been approved.")); return; }
+  box.appendChild(el("p", "sub", `${data.orders.length} order${data.orders.length === 1 ? "" : "s"} over $2,500 not yet approved · ${usd2.format(data.total || 0)} total`));
+  data.orders.forEach((o) => {
+    const row = el("div", "order");
+    row.appendChild(el("div", "who", `${o.location} · ${o.vendor}`));
+    row.appendChild(el("div", "amt", usd2.format(o.amount)));
+    row.appendChild(el("div", "meta", `${o.category}${o.invoice ? " · Invoice " + o.invoice : ""}${o.gm ? " · GM " + o.gm : ""}`));
+    const line = el("div", "meta", "Invoice date " + (o.date || "-"));
+    const d = daysSince(o.date);
+    if (d != null) line.appendChild(el("span", "waiting", d === 0 ? "came in today" : `waiting ${d} day${d === 1 ? "" : "s"}`));
+    row.appendChild(line);
+    if (o.link) { const a = el("a", "btn", "Open in Google Sheets to approve"); a.href = o.link; a.target = "_blank"; a.rel = "noopener"; row.appendChild(a); }
+    box.appendChild(row);
+  });
+}
+
+function toggleOrders(open) {
+  ordersOpen = open;
+  $("ordersCard").setAttribute("aria-expanded", String(open));
+  $("ordersMore").firstChild.textContent = open ? "Hide details " : "Show details ";
+  $("ordersDetail").hidden = !open;
+  if (open) { $("ordersDetail").replaceChildren(el("p", "note", "Loading orders...")); loadOrders(); }
+}
+
+function setStatus(kind, text) {
+  $("statusPill").className = "status" + (kind ? " " + kind : "");
+  $("mode").textContent = text;
+}
+
 async function refresh() {
   $("error").hidden = true;
+  $("refresh").classList.add("spin");
+  const done = () => $("refresh").classList.remove("spin");
   if (!CONFIG.DATA_URL) {
-    $("mode").textContent = "Demo data"; $("mode").className = "badge demo";
-    render(DEMO); return;
+    setStatus("demo", "Demo data");
+    render(DEMO); if (ordersOpen) loadOrders(); done(); return;
   }
-  $("mode").textContent = "Live"; $("mode").className = "badge";
   try {
     render(await fetchData());
-    $("mode").textContent = "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    setStatus("", "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    if (ordersOpen) loadOrders();
   } catch (e) {
+    setStatus("error", "Not updated");
     $("error").hidden = false;
     $("error").textContent = e instanceof TypeError
       ? "Couldn't reach the data service. Check your connection, or open this page in Chrome or Safari instead of an app preview."
       : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
   }
+  done();
 }
 
 $("refresh").addEventListener("click", refresh);
+$("ordersCard").addEventListener("click", () => toggleOrders(!ordersOpen));
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); }); // refresh when the phone app comes back to the front
 refresh();
 setInterval(refresh, CONFIG.REFRESH_MS);
