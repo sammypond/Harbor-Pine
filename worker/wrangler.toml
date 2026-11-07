@@ -1,0 +1,13 @@
+# Only needed if you deploy with the Wrangler command line.
+# If you use the Cloudflare dashboard instead, set these same values there.
+name = "harbor-pine-data"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# Not secret: the sheet ID and the site allowed to read from this Worker
+SPREADSHEET_ID = "1cY9eSEAP9D2EJz9nIa2ow-2uf9MMRhDL2U1Gl5lI40g"
+ALLOWED_ORIGINS = "https://sammypond.github.io"
+
+# The API key is NOT stored in this file. Add it as an encrypted secret:
+#   npx wrangler secret put SHEETS_API_KEY

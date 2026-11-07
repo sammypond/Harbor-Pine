@@ -4,110 +4,138 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#24443A">
+<meta name="color-scheme" content="light">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="H&amp;P Owner">
+<meta name="format-detection" content="telephone=no">
 <title>Harbor &amp; Pine Owner View</title>
 <style>
   :root {
     --pine: #24443A; --pine-dark: #1B2B24; --amber: #C8862A; --sand: #F4EFE6;
     --ink: #1B2B24; --muted: #5E7268; --line: #DCE3DF; --card: #FFFFFF;
     --red: #B5463C; --red-bg: #F7E3E0; --green: #2F6B4F; --green-bg: #E1EFE7; --yellow-bg: #FBF0D9;
+    /* Spacing and type scale smoothly from the smallest phone (320px) to desktop */
+    --gutter: clamp(12px, 4vw, 24px);
+    --gap: clamp(10px, 2.6vw, 16px);
+    --pad: clamp(14px, 3.8vw, 22px);
+    --big: clamp(42px, 13vw, 76px);
+    --val: clamp(22px, 6.5vw, 30px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--sand); color: var(--ink); }
-  header { background: var(--pine); color: #fff; padding: 14px 16px; }
-  .brand { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
-  .brand svg { width: 46px; height: 46px; flex: none; }
-  .brand h1 { font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 700; line-height: 1.1; }
-  .brand p { font-size: 12px; opacity: .8; letter-spacing: .04em; text-transform: uppercase; margin-top: 2px; }
-  main { max-width: 720px; margin: 0 auto; padding: 16px; }
-  .bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
-  .badge { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--sand); color: var(--ink);
+    min-height: 100vh; min-height: 100dvh; /* dvh handles iOS and Android toolbars */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Header stays clear of the notch / Dynamic Island / punch-hole camera */
+  header {
+    background: var(--pine); color: #fff; position: sticky; top: 0; z-index: 5;
+    padding: calc(12px + env(safe-area-inset-top)) calc(var(--gutter) + env(safe-area-inset-right)) 12px calc(var(--gutter) + env(safe-area-inset-left));
+  }
+  .brand { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .brand svg { width: clamp(38px, 11vw, 54px); height: clamp(38px, 11vw, 54px); flex: none; }
+  .brand h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(18px, 5.2vw, 24px); font-weight: 700; line-height: 1.1; }
+  .brand p { font-size: clamp(10px, 2.9vw, 12px); opacity: .85; letter-spacing: .04em; text-transform: uppercase; margin-top: 2px; }
+
+  main {
+    max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap);
+    padding: var(--gap) calc(var(--gutter) + env(safe-area-inset-right)) var(--gap) calc(var(--gutter) + env(safe-area-inset-left));
+  }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .bar .right { display: flex; align-items: center; gap: 8px; }
+  .badge { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
   .badge.demo { background: var(--yellow-bg); border-color: #E8D3A6; color: #6B4E14; }
-  button { font: inherit; border: 1px solid var(--pine); background: #fff; color: var(--pine); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
-  button:hover { background: var(--pine); color: #fff; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
-  .hero { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
-  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-  .big { font-family: Georgia, "Times New Roman", serif; font-size: 56px; font-weight: 700; line-height: 1; margin-top: 6px; }
+  button { font: inherit; font-size: 14px; border: 1px solid var(--pine); background: #fff; color: var(--pine); border-radius: 10px; min-height: 44px; padding: 8px 14px; cursor: pointer; touch-action: manipulation; }
+  button:hover, button:active { background: var(--pine); color: #fff; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: var(--pad); min-width: 0; }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); line-height: 1.3; }
+  .big { font-family: Georgia, "Times New Roman", serif; font-size: var(--big); font-weight: 700; line-height: 1; margin-top: 6px; }
   .big.over { color: var(--red); } .big.ok { color: var(--green); }
   .sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .stat .val { font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+  .stat .label { font-size: 11px; }
+  .stat .val { font-size: var(--val); font-weight: 700; margin-top: 4px; }
   .stat.alert { background: var(--yellow-bg); border-color: #E8D3A6; }
   h2 { font-size: 15px; margin-bottom: 10px; }
-  table { width: 100%; border-collapse: collapse; font-size: 15px; }
-  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; table-layout: auto; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; padding: 6px 4px; border-bottom: 1px solid var(--line); line-height: 1.25; }
   td { padding: 10px 4px; border-bottom: 1px solid var(--line); }
   tr:last-child td { border-bottom: 0; }
-  td.num, th.num { text-align: right; }
+  td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
   .pill.over { background: var(--red-bg); color: var(--red); }
   .pill.ok { background: var(--green-bg); color: var(--green); }
   .pill.wait { background: var(--yellow-bg); color: #6B4E14; }
+  .short { display: none; }
+
   .chart svg { width: 100%; height: auto; display: block; }
   .err { background: var(--red-bg); color: var(--red); border-color: #EBC3BD; font-size: 14px; }
-  .muted { color: var(--muted); font-size: 12px; }
-  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 8px 16px 24px; }
-  details { margin-top: 4px; }
-  details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
-  .setup { display: grid; gap: 8px; margin-top: 10px; }
-  .setup input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; width: 100%; }
-  /* Base = phone (iPhone 16 is 393px wide). Safe areas keep content clear of the Dynamic Island and home bar. */
-  html { -webkit-text-size-adjust: 100%; }
-  body { min-height: 100vh; }
-  header { padding-top: calc(14px + env(safe-area-inset-top)); padding-left: calc(16px + env(safe-area-inset-left)); padding-right: calc(16px + env(safe-area-inset-right)); position: sticky; top: 0; z-index: 5; }
-  main { padding-left: calc(16px + env(safe-area-inset-left)); padding-right: calc(16px + env(safe-area-inset-right)); }
-  footer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
-  main { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  main > * { margin-bottom: 0 !important; min-width: 0; }
-  .bar { margin-bottom: 0; }
-  button { min-height: 44px; padding: 8px 14px; }
-  .stats { gap: 12px; }
-  .stats .card { margin-bottom: 0; }
-  .stat .label { font-size: 11px; line-height: 1.3; }
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 8px var(--gutter) calc(24px + env(safe-area-inset-bottom)); }
 
-  /* Small phones (iPhone SE, mini) */
-  @media (max-width: 375px) {
-    .big { font-size: 46px; }
-    .stat .val { font-size: 22px; }
+  /* ---- Breakpoints ----
+     <= 359px  : smallest phones (iPhone SE 1st gen 320, older/compact Android)
+     360-389px : iPhone SE 2/3, 12/13 mini (375), Galaxy S20-S25 / A-series (360-384)
+     390-440px : iPhone 12-16, Plus, Pro, Pro Max (390-440), Pixel 6-9 (412), large Galaxy (412)
+     441-639px : foldables (Galaxy Z Fold cover/inner, Pixel Fold), small tablets in split view
+     640-959px : tablets (iPad mini/Air portrait, Android tablets)
+     >= 960px  : laptops and desktops (two-column layout) */
+  @media (max-width: 359px) {
+    .brand p { display: none; }
+    .stats { grid-template-columns: 1fr; }
+    table { font-size: 13px; }
+    th { font-size: 10px; letter-spacing: .03em; }
+    td { padding: 9px 2px; } th { padding: 6px 2px; }
+    .pill { font-size: 11px; padding: 2px 6px; }
+    .long { display: none; } .short { display: inline; }
+    .bar { font-size: 12px; }
+  }
+  @media (min-width: 360px) and (max-width: 389px) {
     table { font-size: 14px; }
-    th { font-size: 10px; }
-    .pill { font-size: 11px; padding: 3px 6px; }
+    td { padding: 10px 3px; } th { padding: 6px 3px; }
+    .pill { font-size: 11px; padding: 3px 7px; }
+    .long { display: none; } .short { display: inline; }
   }
-  /* iPhone 16 / 16 Pro / Pro Max widths (376 to 440px) */
-  @media (min-width: 376px) and (max-width: 440px) {
-    .big { font-size: 54px; }
+  @media (min-width: 390px) and (max-width: 440px) {
+    table { font-size: 15px; }
   }
-  /* Tablets and small laptops */
-  @media (min-width: 641px) {
-    .brand, main { max-width: 760px; }
-    .big { font-size: 64px; }
-    .stat .val { font-size: 30px; }
-    .card { padding: 20px; }
-  }
-  /* Desktop: two columns, numbers on the left, locations on the right */
-  @media (min-width: 960px) {
-    .brand, main { max-width: 1120px; }
-    header { padding-top: 18px; padding-bottom: 18px; }
-    .brand svg { width: 54px; height: 54px; }
-    .brand h1 { font-size: 24px; }
-    main { padding-top: 24px; gap: 16px;
-      grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.45fr);
-      grid-template-areas: "bar bar" "hero locs" "stats locs" "chart chart" "settings settings"; }
-    .area-bar { grid-area: bar; } .area-hero { grid-area: hero; } .area-stats { grid-area: stats; }
-    .area-locs { grid-area: locs; } .area-chart { grid-area: chart; } .area-settings { grid-area: settings; }
-    .stats { align-self: start; }
-    .big { font-size: 76px; }
+  @media (min-width: 441px) and (max-width: 639px) {
+    main, .brand { max-width: 600px; }
     table { font-size: 16px; }
+  }
+  @media (min-width: 640px) {
+    main, .brand { max-width: 760px; }
+    table { font-size: 16px; }
+    th { font-size: 12px; }
+    .stat .label { font-size: 12px; }
+  }
+  @media (min-width: 960px) {
+    main, .brand { max-width: 1120px; }
+    header { padding-top: calc(18px + env(safe-area-inset-top)); padding-bottom: 18px; }
+    main { padding-top: 24px;
+      grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.45fr);
+      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "chart chart"; }
+    .area-bar { grid-area: bar; } .area-err { grid-area: err; } .area-hero { grid-area: hero; }
+    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; }
+    .area-hero { display: flex; flex-direction: column; justify-content: center; }
     td { padding: 12px 6px; }
-    .area-hero { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
   }
-  /* Phones turned sideways: keep cards side by side */
-  @media (max-height: 500px) and (orientation: landscape) {
+  /* Phones turned sideways: short screens, so don't pin the header and use two columns */
+  @media (orientation: landscape) and (max-height: 500px) {
     header { position: static; }
+    main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+      grid-template-areas: "bar bar" "err err" "hero locs" "stats locs" "chart chart"; }
+    .area-bar { grid-area: bar; } .area-err { grid-area: err; } .area-hero { grid-area: hero; }
+    .area-stats { grid-area: stats; align-self: start; } .area-locs { grid-area: locs; } .area-chart { grid-area: chart; }
+    .big { font-size: clamp(40px, 7vw, 60px); }
   }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 </head>
 <body>
@@ -129,21 +157,19 @@
 
 <main>
   <div class="bar area-bar">
-    <span id="week" class="badge">Loading…</span>
-    <span>
+    <span id="week" class="badge">Loading...</span>
+    <span class="right">
       <span id="mode" class="badge"></span>
       <button id="refresh" type="button">Refresh</button>
     </span>
   </div>
 
-  <div id="error" class="card err area-bar" hidden></div>
+  <div id="error" class="card err area-err" role="alert" hidden></div>
 
-  <section class="card hero area-hero">
-    <div>
-      <div class="label">Group food cost</div>
-      <div id="group" class="big">-</div>
-      <div id="target" class="sub"></div>
-    </div>
+  <section class="card area-hero">
+    <div class="label">Group food cost</div>
+    <div id="group" class="big">-</div>
+    <div id="target" class="sub"></div>
   </section>
 
   <section class="stats area-stats">
@@ -154,7 +180,12 @@
   <section class="card area-locs">
     <h2>By location</h2>
     <table>
-      <thead><tr><th>Location</th><th class="num">Food cost</th><th>Status</th><th class="num">To approve</th></tr></thead>
+      <thead><tr>
+        <th>Location</th>
+        <th class="num"><span class="long">Food cost</span><span class="short">Cost</span></th>
+        <th>Status</th>
+        <th class="num"><span class="long">To approve</span><span class="short">Approve</span></th>
+      </tr></thead>
       <tbody id="locs"></tbody>
     </table>
   </section>
@@ -163,36 +194,16 @@
     <h2>Six-week trend</h2>
     <div id="chart"></div>
   </section>
-
-  <section class="card area-settings">
-    <details>
-      <summary>Connection settings</summary>
-      <div class="setup">
-        <label class="muted" for="sid">Spreadsheet ID (the long code in the sheet's URL)</label>
-        <input id="sid" autocomplete="off" spellcheck="false">
-        <label class="muted" for="key">Google API key (Sheets API, read-only)</label>
-        <input id="key" autocomplete="off" spellcheck="false">
-        <div><button id="save" type="button">Save and connect</button> <button id="clear" type="button">Use demo data</button></div>
-        <p class="muted">This page only reads. It sends GET requests to the Google Sheets API and cannot change the sheet.</p>
-      </div>
-    </details>
-  </section>
 </main>
 <footer>Read-only view of the Owner View tab · Updates every 60 seconds</footer>
 
+<!-- config.js holds only the public address of your Cloudflare Worker. No API key lives in this site. -->
+<script src="config.js"></script>
 <script>
-/* ---------- Settings ----------
-   Fill these in to hard-code the connection, or leave blank and use
-   "Connection settings" on the page (saved in this browser only). */
-const CONFIG = {
-  SPREADSHEET_ID: "1cY9eSEAP9D2EJz9nIa2ow-2uf9MMRhDL2U1Gl5lI40g", // Harbor_Pine_Food_Cost in your Drive
-  API_KEY: "AIzaSyCEiGaellYMUHQ_YrH5qgtJaNhBfk3i934",
-  TAB: "Owner View",
-  REFRESH_MS: 60000,
-};
+const CONFIG = Object.assign({ DATA_URL: "", REFRESH_MS: 60000 }, window.HP_CONFIG || {});
 
-// Cells on the Owner View tab (matches the workbook layout)
-const RANGES = { week: "B2", group: "B4", target: "B5", reporting: "B6", locs: "A9:D14", orders: "B16", trend: "A21:B26" };
+// Order must match the RANGES list in worker/worker.js
+const KEYS = ["week", "group", "target", "reporting", "locs", "orders", "trend"];
 
 const DEMO = {
   week: [["11/1/2026"]], group: [["30.0%"]], target: [["30.0%"]], reporting: [["5 of 6"]], orders: [["1"]],
@@ -202,24 +213,15 @@ const DEMO = {
 };
 
 const $ = (id) => document.getElementById(id);
-function store(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
-function load(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
-function settings() {
-  return { id: CONFIG.SPREADSHEET_ID || load("hp_sid"), key: CONFIG.API_KEY || load("hp_key") };
-}
 const pct = (s) => { const n = parseFloat(String(s || "").replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
 const cell = (rows, r = 0, c = 0) => (rows && rows[r] && rows[r][c] != null ? String(rows[r][c]) : "");
 
-async function fetchSheet({ id, key }) {
-  const tab = "'" + CONFIG.TAB.replace(/'/g, "''") + "'";
-  const params = new URLSearchParams({ key, valueRenderOption: "FORMATTED_VALUE" });
-  Object.values(RANGES).forEach((r) => params.append("ranges", tab + "!" + r));
-  const url = "https://sheets.googleapis.com/v4/spreadsheets/" + encodeURIComponent(id) + "/values:batchGet?" + params;
-  const res = await fetch(url, { method: "GET" });
+async function fetchData() {
+  const res = await fetch(CONFIG.DATA_URL, { method: "GET", headers: { Accept: "application/json" } });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((body.error && body.error.message) || ("Request failed (" + res.status + ")"));
+  if (!res.ok) throw new Error((body.error && (body.error.message || body.error)) || ("Request failed (" + res.status + ")"));
   const out = {};
-  Object.keys(RANGES).forEach((k, i) => { out[k] = (body.valueRanges[i] && body.valueRanges[i].values) || []; });
+  KEYS.forEach((k, i) => { out[k] = (body.valueRanges && body.valueRanges[i] && body.valueRanges[i].values) || []; });
   return out;
 }
 
@@ -240,24 +242,27 @@ function render(d) {
     const tr = document.createElement("tr");
     const status = cell([r], 0, 2);
     const cls = status === "Over target" ? "over" : status === "On target" ? "ok" : "wait";
-    [["", cell([r],0,0)], ["num", cell([r],0,1) || "-"]].forEach(([c, v]) => { const td = document.createElement("td"); td.className = c; td.textContent = v; tr.appendChild(td); });
-    const tdS = document.createElement("td"); const pill = document.createElement("span"); pill.className = "pill " + cls; pill.textContent = status || "-"; tdS.appendChild(pill); tr.appendChild(tdS);
-    const tdA = document.createElement("td"); tdA.className = "num"; tdA.textContent = cell([r],0,3) || "0"; if (Number(tdA.textContent) > 0) tdA.style.fontWeight = "700"; tr.appendChild(tdA);
+    const td = (cls2, text) => { const e = document.createElement("td"); e.className = cls2; e.textContent = text; tr.appendChild(e); return e; };
+    td("", cell([r], 0, 0));
+    td("num", cell([r], 0, 1) || "-");
+    const tdS = document.createElement("td"); const pill = document.createElement("span");
+    pill.className = "pill " + cls; pill.textContent = status || "-"; tdS.appendChild(pill); tr.appendChild(tdS);
+    const tdA = td("num", cell([r], 0, 3) || "0"); if (Number(tdA.textContent) > 0) tdA.style.fontWeight = "700";
     tbody.appendChild(tr);
   });
 
   drawTrend((d.trend || []).filter((r) => r && r[0]).map((r) => ({ label: r[0], v: pct(r[1]) })), tn);
 }
 
-let lastTrend = null;
-let resizeTimer;
+let lastTrend = null, resizeTimer;
 window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (lastTrend) drawTrend(lastTrend[0], lastTrend[1]); }, 150); });
 function drawTrend(points, target) {
   lastTrend = [points, target];
-  const W = Math.max(280, Math.round($("chart").clientWidth || 600)), H = W < 520 ? 210 : 260, L = 46, R = 14, T = 28, B = 34;
+  const W = Math.max(260, Math.round($("chart").clientWidth || 600));
+  const small = W < 360, H = W < 520 ? 210 : 260, L = small ? 40 : 46, R = 12, T = 28, B = 34, fs = small ? 11 : 13;
   const vals = points.map((p) => p.v).filter((v) => v != null).concat(target != null ? [target] : []);
   if (!vals.length) { $("chart").textContent = "No trend data yet."; return; }
-  let lo = Math.floor(Math.min(...vals) - 1), hi = Math.ceil(Math.max(...vals) + 1);
+  const lo = Math.floor(Math.min(...vals) - 1), hi = Math.ceil(Math.max(...vals) + 1);
   const x = (i) => L + (points.length > 1 ? i * (W - L - R) / (points.length - 1) : (W - L - R) / 2);
   const y = (v) => T + (hi - v) * (H - T - B) / (hi - lo);
   const ns = "http://www.w3.org/2000/svg";
@@ -266,45 +271,46 @@ function drawTrend(points, target) {
   const add = (tag, attrs, text) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
   for (let v = lo; v <= hi; v++) {
     add("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "#E6ECE8" });
-    add("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 13, fill: "#5E7268" }, v + "%");
+    add("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", "font-size": fs, fill: "#5E7268" }, v + "%");
   }
   if (target != null) {
     add("line", { x1: L, x2: W - R, y1: y(target), y2: y(target), stroke: "#C8862A", "stroke-dasharray": "5 4", "stroke-width": 1.5 });
-    add("text", { x: L + 6, y: y(target) - 8, "text-anchor": "start", "font-size": 12, fill: "#8A5C17" }, "Target " + target + "%");
+    add("text", { x: L + 6, y: y(target) - 8, "text-anchor": "start", "font-size": fs - 1, fill: "#8A5C17" }, "Target " + target + "%");
   }
   const pts = points.map((p, i) => (p.v == null ? null : [x(i), y(p.v)])).filter(Boolean);
   add("polyline", { points: pts.map((p) => p.join(",")).join(" "), fill: "none", stroke: "#24443A", "stroke-width": 3, "stroke-linejoin": "round" });
   points.forEach((p, i) => {
-    add("text", { x: x(i), y: H - 14, "text-anchor": i === 0 ? "start" : (i === points.length - 1 ? "end" : "middle"), "font-size": 13, fill: "#5E7268" }, p.label.replace(/\/\d{4}$/, ""));
+    // On very narrow screens, label every other week so dates don't collide
+    if (!small || i % 2 === 0 || i === points.length - 1)
+      add("text", { x: x(i), y: H - 12, "text-anchor": i === 0 ? "start" : (i === points.length - 1 ? "end" : "middle"), "font-size": fs, fill: "#5E7268" }, p.label.replace(/\/\d{4}$/, ""));
     if (p.v == null) return;
     const last = i === points.length - 1;
     add("circle", { cx: x(i), cy: y(p.v), r: last ? 6 : 4, fill: last ? "#C8862A" : "#24443A" });
-    if (last) add("text", { x: x(i) - 10, y: y(p.v) - 12, "text-anchor": "end", "font-size": 15, "font-weight": 700, fill: "#1B2B24" }, p.v.toFixed(1) + "%");
+    if (last) add("text", { x: x(i) - 10, y: y(p.v) - 12, "text-anchor": "end", "font-size": fs + 2, "font-weight": 700, fill: "#1B2B24" }, p.v.toFixed(1) + "%");
   });
   $("chart").replaceChildren(svg);
 }
 
 async function refresh() {
-  const s = settings();
   $("error").hidden = true;
-  if (!s.id || !s.key) {
+  if (!CONFIG.DATA_URL) {
     $("mode").textContent = "Demo data"; $("mode").className = "badge demo";
     render(DEMO); return;
   }
   $("mode").textContent = "Live"; $("mode").className = "badge";
   try {
-    render(await fetchSheet(s));
+    render(await fetchData());
     $("mode").textContent = "Live · " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   } catch (e) {
     $("error").hidden = false;
-    $("error").textContent = "Couldn't read the sheet (" + e.message.replace(/[.\s]+$/, "") + "). Check the spreadsheet ID, the API key, and that the sheet is shared as 'Anyone with the link can view.'";
+    $("error").textContent = e instanceof TypeError
+      ? "Couldn't reach the data service. Check your connection, or open this page in Chrome or Safari instead of an app preview."
+      : "The data service said: " + String(e.message).replace(/[.\s]+$/, "") + ".";
   }
 }
 
-$("sid").value = load("hp_sid"); $("key").value = load("hp_key");
-$("save").addEventListener("click", () => { store("hp_sid", $("sid").value.trim()); store("hp_key", $("key").value.trim()); refresh(); });
-$("clear").addEventListener("click", () => { store("hp_sid", null); store("hp_key", null); $("sid").value = ""; $("key").value = ""; refresh(); });
 $("refresh").addEventListener("click", refresh);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); }); // refresh when the phone app comes back to the front
 refresh();
 setInterval(refresh, CONFIG.REFRESH_MS);
 </script>

@@ -1,0 +1,9 @@
+# Local secrets for testing the Worker. Never commit these.
+.dev.vars
+.env
+*.secret
+worker/.dev.vars
+worker/.wrangler/
+node_modules/
+.DS_Store
+*.bak
