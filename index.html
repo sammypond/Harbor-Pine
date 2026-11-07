@@ -276,6 +276,8 @@ function render(d) {
   const orders = cell(d.orders) || "0";
   $("orders").textContent = orders;
   const waiting = Number(orders) > 0;
+  if (ordersOpen && lastOrdersCount !== null && Number(orders) !== lastOrdersCount) loadOrders(true);
+  lastOrdersCount = Number(orders);
   $("ordersCard").classList.toggle("alert", waiting);
   $("ordersCard").classList.toggle("clickable", waiting);
   $("ordersCard").disabled = !waiting;
@@ -344,6 +346,7 @@ const daysSince = (d) => { const t = Date.parse(d); return t ? Math.max(0, Math.
 const DEMO_ORDERS = { count: 1, total: 3100, orders: [{ location: "Westside", gm: "Luis", date: "10/31/2026", vendor: "Sysco",
   category: "Meat & Seafood", invoice: "SYS-58817", amount: 3100, status: "Pending", link: "" }] };
 let ordersOpen = false;
+let lastOrdersCount = null;
 
 async function loadOrders(fresh) {
   const box = $("ordersDetail");
@@ -386,7 +389,7 @@ function toggleOrders(open) {
   $("ordersCard").setAttribute("aria-expanded", String(open));
   $("ordersMore").firstChild.textContent = open ? "Hide details " : "Show details ";
   $("ordersDetail").hidden = !open;
-  if (open) { $("ordersDetail").replaceChildren(el("p", "note", "Loading orders...")); loadOrders(false); }
+  if (open) { $("ordersDetail").replaceChildren(el("p", "note", "Loading orders...")); loadOrders(true); }
 }
 
 function setStatus(kind, text) {

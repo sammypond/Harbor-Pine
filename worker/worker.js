@@ -119,8 +119,10 @@ async function ordersView(env) {
   const orders = [];
   locations.forEach((loc, li) => {
     (tabs[li] || []).forEach((r, i) => {
-      // Same rule as the sheet: needs Marcus's OK and isn't approved (or declined) yet
-      if (!r || r[6] !== "Yes" || r[7] === "Approved" || r[7] === "Declined") return;
+      // Exactly the sheet's rule (Summary tab, "Orders Waiting on Marcus"):
+      // Needs Marcus OK = "Yes" and Marcus OK is "Pending" or blank
+      const ok = r ? String(r[7] == null ? "" : r[7]).trim() : "";
+      if (!r || r[6] !== "Yes" || (ok !== "" && ok !== "Pending")) return;
       const row = ROW_START + i;
       orders.push({
         location: loc.name, gm: loc.gm,
